@@ -1,11 +1,11 @@
+import ApiError from '../../abstractions/ApiError';
+import { StatusCodes } from 'http-status-codes';
 import {
 	Enquiry,
 	EnquiryAttributes,
 	EnquiryCreationAttributes,
 } from '../../database/models/Enquiry';
 import logger from '../../lib/logger';
-import ApiError from '../../abstractions/ApiError';
-import { StatusCodes } from 'http-status-codes';
 
 export class EnquiryService {
 	async getAll(): Promise<EnquiryAttributes[]> {

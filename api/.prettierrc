@@ -1,30 +1,22 @@
 {
-	"bracketSpacing": true,
-	"printWidth": 80,
-	"proseWrap": "preserve",
-	"semi": true,
-	"singleQuote": true,
-	"trailingComma": "all",
-	"tabWidth": 4,
-	"useTabs": true,
-	"parser": "typescript",
-	"arrowParens": "always",
-	"requirePragma": false,
-	"insertPragma": false,
-	"endOfLine": "lf",
-	"overrides": [
-		{
-			"files": "*.json",
-			"options": {
-				"singleQuote": false
+	"extends": ["prettier", "plugin:@typescript-eslint/recommended"],
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["prettier", "@typescript-eslint"],
+	"ignorePatterns": ["**/*.js"],
+	"root": true,
+	"rules": {
+		"import/no-unresolved": "off",
+		"import/extensions": "off",
+		"@typescript-eslint/no-var-requires": "warn",
+		"@typescript-eslint/no-empty-function": "warn",
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
 			}
-		},
-		{
-			"files": ".*rc",
-			"options": {
-				"singleQuote": false,
-				"parser": "json"
-			}
-		}
-	]
+		]
+	}
+
 }
