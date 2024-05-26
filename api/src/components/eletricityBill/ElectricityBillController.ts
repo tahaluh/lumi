@@ -3,7 +3,6 @@ import BaseController from '../BaseController';
 import { RouteDefinition } from '../../types/RouteDefinition';
 import { ElectricityBillService } from './ElectricityBillService';
 import multer from 'multer';
-import fs from 'fs';
 import { storage } from '../../configs/multerConfig';
 
 const billService = new ElectricityBillService();
@@ -51,13 +50,9 @@ export default class ElectricityBillController extends BaseController {
 			}
 
 			const filePath = req.file.path;
-			const dataBuffer = fs.readFileSync(filePath);
-			const extractedData = await billService.extractDataFromPDF(dataBuffer);
+			const extractedData = await billService.extractDataFromPDF(filePath, false);
 
-			// Respond with the extracted data
 			res.status(200).json(extractedData);
-
-			fs.unlinkSync(filePath);
 		} catch (error) {
 			next(error);
 		}

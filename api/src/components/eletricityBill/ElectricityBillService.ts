@@ -1,6 +1,8 @@
 import { ElectricityBill, ElectricityBillAttributes, ElectricityBillCreationAttributes } from '../../database/models/ElectricityBill';
 import logger from '../../lib/logger';
 import pdfParse from 'pdf-parse';
+import { CreateElectricityBillDTO, ElectricityBillPDF } from './types';
+import fs from 'fs';
 
 export class ElectricityBillService {
 	async getAllBills(): Promise<ElectricityBillAttributes[]> {
@@ -26,9 +28,11 @@ export class ElectricityBillService {
 		}
 	}
 
-	async extractDataFromPDF(dataBuffer: Buffer) {
+	async extractDataFromPDF(filePath: string, saveToDatabase: boolean = false): Promise<ElectricityBillPDF> {
 		try {
+			const dataBuffer = fs.readFileSync(filePath);
 			const pdfData = await pdfParse(dataBuffer);
+			fs.unlinkSync(filePath);
 			const { text } = pdfData;
 
 			// Extract data from the pdf text with regex
@@ -38,6 +42,7 @@ export class ElectricityBillService {
 			const energiaICMS_Qntd_Preco_Valor_Pattern = /Energia SCEE s\/ ICMSkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
 			const energiaCompensada_Qntd_Preco_Valor_Pattern = /Energia compensada GD IkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(-\d+[,.]?\d+)/;
 			const contribIlumPattern = /Contrib Ilum Publica Municipal\s+(\d+[,.]?\d+)/;
+			const codBarrasPattern = /(\d{11}-\d \d{11}-\d \d{11}-\d \d{11}-\d)/;
 
 
 			const extractData = (text: string, pattern: RegExp) => {
@@ -51,8 +56,10 @@ export class ElectricityBillService {
 			const energiaICMS_Qntd_Preco_Valor_Matches = extractData(text, energiaICMS_Qntd_Preco_Valor_Pattern);
 			const energiaCompensada_Qntd_Preco_Valor_Matches = extractData(text, energiaCompensada_Qntd_Preco_Valor_Pattern);
 			const contribIlumMatches = extractData(text, contribIlumPattern);
+			const codBarrasMatches = extractData(text, codBarrasPattern);
 
-			return {
+			const data = {
+				pdfUrl: filePath,
 				text,
 				noDoCliente: noCliente_nInstalacao_Matches?.[0] ?? null,
 				noDaInstalacao: noCliente_nInstalacao_Matches?.[1] ?? null,
@@ -75,9 +82,65 @@ export class ElectricityBillService {
 					valor: energiaCompensada_Qntd_Preco_Valor_Matches?.[2] ?? null,
 				},
 				contribIlum: contribIlumMatches?.[0] ?? null,
-			};
+				codBarras: codBarrasMatches?.[0] ?? null,
+			}
+
+			if (saveToDatabase) {
+				await this.createByPDFData(data);
+			}
+
+			return data;
 		} catch (error) {
 			console.error('Error parsing PDF:', error);
+			throw error;
+		}
+	}
+
+	async createByPDFData(data: ElectricityBillPDF): Promise<ElectricityBillAttributes> {
+		try {
+			const { noDoCliente, noDaInstalacao, mesReferente, vencimento, valorAPagar, energiaEletrica, enegiaICMS, energiaCompensada, contribIlum, codBarras } = data;
+
+			const billData: CreateElectricityBillDTO = {
+				pdfUrl: data.pdfUrl,
+				pdfText: data.text,
+				clientNumber: noDoCliente,
+				intallationNumber: noDaInstalacao,
+				referenceMonth: mesReferente,
+				dueDate: vencimento,
+				barCode: codBarras,
+
+				energyAmount: parseFloat(energiaEletrica.quantidade),
+				energyPrice: parseFloat(energiaEletrica.preco),
+				energyTotal: parseFloat(energiaEletrica.valor),
+
+				energyICMSAmount: parseFloat(enegiaICMS.quantidade),
+				energyICMSPrice: parseFloat(enegiaICMS.preco),
+				energyICMSTotal: parseFloat(enegiaICMS.valor),
+
+				energyCompensatedAmount: parseFloat(energiaCompensada.quantidade),
+				energyCompensatedPrice: parseFloat(energiaCompensada.preco),
+				energyCompensatedTotal: parseFloat(energiaCompensada.valor),
+
+				publicLightingContribution: parseFloat(contribIlum),
+
+				totalPrice: parseFloat(valorAPagar),
+			}
+
+			const bill = await this.create(billData);
+
+			return bill;
+		} catch (error) {
+			logger.error(error);
+			throw error;
+		}
+	}
+
+	async create(data: CreateElectricityBillDTO): Promise<ElectricityBillAttributes> {
+		try {
+			const bill = await ElectricityBill.create(data);
+			return bill;
+		} catch (error) {
+			logger.error(error);
 			throw error;
 		}
 	}
