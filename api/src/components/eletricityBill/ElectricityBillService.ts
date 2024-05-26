@@ -34,28 +34,8 @@ export class ElectricityBillService {
 			const pdfData = await pdfParse(dataBuffer);
 			const { text } = pdfData;
 
-			// Extract data from the pdf text with regex
-			const noCliente_nInstalacao_Pattern = /Nº DO CLIENTE\s+Nº DA INSTALAÇÃO\s+(\d+)\s+(\d+)/
-			const mesRef_Vencimento_Valor_Pattern = /Referente a\s+Vencimento\s+Valor a pagar \(R\$\)\s+([A-Z]{3}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(\d+[,.]?\d+)/
-			const energiaEletrica_Qntd_Preco_Valor_Pattern = /Energia ElétricakWh\s+(\d+[,.]?\d*)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
-			const energiaICMS_Qntd_Preco_Valor_Pattern = /Energia SCEE s\/ ICMSkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
-			const energiaCompensada_Qntd_Preco_Valor_Pattern = /Energia compensada GD IkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(-\d+[,.]?\d+)/;
-			const contribIlumPattern = /Contrib Ilum Publica Municipal\s+(\d+[,.]?\d+)/;
-			const codBarrasPattern = /(\d{11}-\d \d{11}-\d \d{11}-\d \d{11}-\d)/;
+			const { noCliente_nInstalacao_Matches, mesRef_Vencimento_Valor_Matches, energiaEletrica_Qntd_Preco_Valor_Matches, energiaICMS_Qntd_Preco_Valor_Matches, energiaCompensada_Qntd_Preco_Valor_Matches, contribIlumMatches, codBarrasMatches } = this.matchData(text);
 
-
-			const extractData = (text: string, pattern: RegExp) => {
-				const match = text.match(pattern);
-				return match ? match.slice(1,) : null;
-			};
-
-			const noCliente_nInstalacao_Matches = extractData(text, noCliente_nInstalacao_Pattern);
-			const mesRef_Vencimento_Valor_Matches = extractData(text, mesRef_Vencimento_Valor_Pattern);
-			const energiaEletrica_Qntd_Preco_Valor_Matches = extractData(text, energiaEletrica_Qntd_Preco_Valor_Pattern);
-			const energiaICMS_Qntd_Preco_Valor_Matches = extractData(text, energiaICMS_Qntd_Preco_Valor_Pattern);
-			const energiaCompensada_Qntd_Preco_Valor_Matches = extractData(text, energiaCompensada_Qntd_Preco_Valor_Pattern);
-			const contribIlumMatches = extractData(text, contribIlumPattern);
-			const codBarrasMatches = extractData(text, codBarrasPattern);
 
 			const data = {
 				pdfUrl: filePath,
@@ -146,7 +126,7 @@ export class ElectricityBillService {
 				});
 
 				if (existingBill) {
-					throw new Error('Bill already exists');
+					// throw new Error('Bill already exists');
 				}
 			}
 			const bill = await ElectricityBill.create(data);
@@ -154,6 +134,56 @@ export class ElectricityBillService {
 		} catch (error) {
 			logger.error(error);
 			throw error;
+		}
+	}
+
+	matchData(text: string) {
+		const noCliente_nInstalacao_Pattern = /Nº DO CLIENTE\s+Nº DA INSTALAÇÃO\s+(\d+)\s+(\d+)/
+		const mesRef_Vencimento_Valor_Pattern = /Referente a\s+Vencimento\s+Valor a pagar \(R\$\)\s+([A-Z]{3}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(\d+[,.]?\d+)/
+		const energiaEletrica_Qntd_Preco_Valor_Pattern = /Energia ElétricakWh\s+(\d+[,.]?\d*)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
+
+		const energiaICMS_Qntd_Preco_Valor_Pattern = /ICMSkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
+		const enCompICMS_Qntd_Preco_Valor_Pattern = /En comp. s\/ ICMSkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
+		const energiaIsenta_Qntd_Preco_Valor_Pattern = /ISENTAkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)/;
+
+
+		const energiaCompensada_Qntd_Preco_Valor_Pattern = /Energia compensada GD IkWh\s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(-\d+[,.]?\d+)/; // negative value
+		const energiaInjetada_Qntd_Preco_Valor_Pattern = /Energia injetada HFPkWh \s+(\d+[,.]?\d+)\s+(\d+[,.]?\d+)\s+(-\d+[,.]?\d+)/; // negative value
+
+		const contribIlumPattern = /Contrib Ilum Publica Municipal\s+(\d+[,.]?\d+)/;
+		const codBarrasPattern = /(\d{11}-\d \d{11}-\d \d{11}-\d \d{11}-\d)/;
+
+
+		const extractData = (text: string, pattern: RegExp) => {
+			const match = text.match(pattern);
+			return match ? match.slice(1,) : null;
+		};
+
+		const noCliente_nInstalacao_Matches = extractData(text, noCliente_nInstalacao_Pattern);
+		const mesRef_Vencimento_Valor_Matches = extractData(text, mesRef_Vencimento_Valor_Pattern);
+		const energiaEletrica_Qntd_Preco_Valor_Matches = extractData(text, energiaEletrica_Qntd_Preco_Valor_Pattern);
+
+		const energiaICMS_Qntd_Preco_Valor_Matches = extractData(text, energiaICMS_Qntd_Preco_Valor_Pattern);
+		const enCompICMS_Qntd_Preco_Valor_Matches = extractData(text, enCompICMS_Qntd_Preco_Valor_Pattern);
+		const energiaIsenta_Qntd_Preco_Valor_Matches = extractData(text, energiaIsenta_Qntd_Preco_Valor_Pattern);
+
+		const energiaCompensada_Qntd_Preco_Valor_Matches = extractData(text, energiaCompensada_Qntd_Preco_Valor_Pattern);
+		const energiaInjetada_Qntd_Preco_Valor_Matches = extractData(text, energiaInjetada_Qntd_Preco_Valor_Pattern);
+
+		const contribIlumMatches = extractData(text, contribIlumPattern);
+		const codBarrasMatches = extractData(text, codBarrasPattern);
+
+		return {
+			noCliente_nInstalacao_Matches,
+			mesRef_Vencimento_Valor_Matches,
+			energiaEletrica_Qntd_Preco_Valor_Matches,
+
+			energiaICMS_Qntd_Preco_Valor_Matches: energiaICMS_Qntd_Preco_Valor_Matches?.length ? energiaICMS_Qntd_Preco_Valor_Matches : enCompICMS_Qntd_Preco_Valor_Matches?.length ? enCompICMS_Qntd_Preco_Valor_Matches : energiaIsenta_Qntd_Preco_Valor_Matches,
+
+			energiaCompensada_Qntd_Preco_Valor_Matches: energiaCompensada_Qntd_Preco_Valor_Matches?.length ? energiaCompensada_Qntd_Preco_Valor_Matches : energiaInjetada_Qntd_Preco_Valor_Matches,
+
+			contribIlumMatches,
+			codBarrasMatches,
 		}
 	}
 }
