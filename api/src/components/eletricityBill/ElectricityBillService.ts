@@ -137,6 +137,18 @@ export class ElectricityBillService {
 
 	async create(data: CreateElectricityBillDTO): Promise<ElectricityBillAttributes> {
 		try {
+			if (data.clientNumber && data.installationNumber) {
+				const { pdfText, pdfUrl, ...findData } = data;
+				const existingBill = await ElectricityBill.findOne({
+					where: {
+						...findData
+					}
+				});
+
+				if (existingBill) {
+					throw new Error('Bill already exists');
+				}
+			}
 			const bill = await ElectricityBill.create(data);
 			return bill;
 		} catch (error) {
