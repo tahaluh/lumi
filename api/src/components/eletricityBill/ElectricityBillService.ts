@@ -130,7 +130,7 @@ export class ElectricityBillService {
 				});
 
 				if (existingBill) {
-					// throw new Error('Bill already exists');
+					throw new Error('Bill already exists');
 				}
 			}
 			const bill = await ElectricityBill.create(data);
