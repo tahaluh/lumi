@@ -15,7 +15,11 @@ export default class ElectricityBillController extends BaseController {
 		return [
 			{ path: '/', method: 'get', handler: this.getAllBills.bind(this) },
 			{ path: '/:id', method: 'get', handler: this.getBillById.bind(this) },
+			{ path: '/client/:clientNumber/', method: 'get', handler: this.getBillsByClientNumber.bind(this) },
 			{ path: '/upload', method: 'post', handler: [upload.single('file'), this.uploadFile.bind(this)] },
+			{
+				path: '/download/:id', method: 'get', handler: this.downloadBill.bind(this),
+			},
 			{
 				path: '/upload-multiple',
 				method: 'post',
@@ -96,6 +100,45 @@ export default class ElectricityBillController extends BaseController {
 			const clientNumber = req.params.clientNumber;
 			const dashboardData = await billService.getClientDashboard(clientNumber);
 			this.send(res, 200, dashboardData);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async getBillsByClientNumber(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const clientNumber = req.params.clientNumber;
+			const { startDate, endDate, limit, offset } = req.query;
+
+			// Convertendo os valores para string
+			const startDateString = startDate as string;
+			const endDateString = endDate as string;
+			const limitString = limit as string;
+			const offsetString = offset as string;
+
+			const bills = await billService.getBillsByClientNumber(clientNumber, {
+				startDate: startDateString,
+				endDate: endDateString,
+				limit: limitString,
+				offset: offsetString,
+			});
+			this.send(res, 200, bills);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+
+	async downloadBill(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const billId = req.params.id;
+			const bill = await billService.getBillById(billId);
+			if (!bill) {
+				res.sendStatus(404);
+				return;
+			}
+			const filePath = bill.pdfUrl;
+			res.download(filePath);
 		} catch (error) {
 			next(error);
 		}

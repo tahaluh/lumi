@@ -1,9 +1,13 @@
 import { ElectricityBill, ElectricityBillAttributes, ElectricityBillCreationAttributes } from '../../database/models/ElectricityBill';
 import logger from '../../lib/logger';
 import pdfParse from 'pdf-parse';
-import { ClientDashboardResponse, CreateElectricityBillDTO, ElectricityBillDashboardData, ElectricityBillPDF } from './types';
+import { ClientDashboardResponse, CreateElectricityBillDTO, ElectricityBillDashboardData, ElectricityBillPDF, FilterQueryParams } from './types';
 import fs from 'fs';
 
+
+const months = [
+	'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'
+]
 export class ElectricityBillService {
 	async getAllBills(): Promise<ElectricityBillAttributes[]> {
 		try {
@@ -261,9 +265,32 @@ export class ElectricityBillService {
 			totals,
 		}
 	}
+
+	async getBillsByClientNumber(clientNumber: string, params: FilterQueryParams): Promise<ElectricityBillAttributes[]> {
+		const where: any = {
+			clientNumber
+		};
+
+		if (params.startDate) {
+			where.referenceMonth = {
+				...where.referenceMonth,
+				$gte: params.startDate
+			}
+		}
+
+		if (params.endDate) {
+			where.referenceMonth = {
+				...where.referenceMonth,
+				$lte: params.endDate
+			}
+		}
+
+		const bills = await ElectricityBill.findAll({
+			where,
+			limit: params.limit ? parseInt(params.limit) : undefined,
+			offset: params.offset ? parseInt(params.offset) : undefined,
+		});
+
+		return bills;
+	}
 }
-
-
-const months = [
-	'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'
-]
