@@ -53,3 +53,31 @@ export type ElectricityBillPDF = {
     contribIlum: string | null;
     codBarras: string | null;
 };
+
+export type ClientDashboardResponse = {
+    clientNumber: string;
+    nOfBills: number;
+
+    data: ElectricityBillDashboardData[];
+    totals: ElectricityBillDashboardData;
+};
+
+export type ElectricityBillDashboardData = {
+    referenceMonth: string;
+
+    energyAmount: number;
+    energyPrice: number;
+    energyTotal: number;
+
+    energyICMSAmount: number;
+    energyICMSPrice: number;
+    energyICMSTotal: number;
+
+    energyCompensatedAmount: number;
+    energyCompensatedPrice: number;
+    energyCompensatedTotal: number;
+
+    publicLightingContribution: number;
+
+    totalPrice: number;
+}

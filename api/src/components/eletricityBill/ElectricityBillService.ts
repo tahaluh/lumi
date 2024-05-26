@@ -1,7 +1,7 @@
 import { ElectricityBill, ElectricityBillAttributes, ElectricityBillCreationAttributes } from '../../database/models/ElectricityBill';
 import logger from '../../lib/logger';
 import pdfParse from 'pdf-parse';
-import { CreateElectricityBillDTO, ElectricityBillPDF } from './types';
+import { ClientDashboardResponse, CreateElectricityBillDTO, ElectricityBillDashboardData, ElectricityBillPDF } from './types';
 import fs from 'fs';
 
 export class ElectricityBillService {
@@ -186,4 +186,84 @@ export class ElectricityBillService {
 			codBarrasMatches,
 		}
 	}
+
+	async getClientDashboard(clientNumber: string): Promise<ClientDashboardResponse> {
+		const bills = await ElectricityBill.findAll({
+			where: {
+				clientNumber
+			}
+		});
+
+		const data = bills.map(bill => {
+			const { energyAmount, energyCompensatedAmount, energyCompensatedPrice, energyCompensatedTotal, energyICMSAmount, energyICMSPrice, energyICMSTotal, energyPrice, energyTotal, referenceMonth, publicLightingContribution, totalPrice } = bill;
+			const dashboardData: ElectricityBillDashboardData = {
+				referenceMonth,
+				energyAmount: parseFloat((energyAmount ?? '0').replace(',', ".")),
+				energyCompensatedAmount: parseFloat((energyCompensatedAmount ?? '0').replace(',', ".")),
+				energyCompensatedPrice: parseFloat((energyCompensatedPrice ?? '0').replace(',', ".")),
+				energyCompensatedTotal: parseFloat((energyCompensatedTotal ?? '0').replace(',', ".")),
+				energyICMSAmount: parseFloat((energyICMSAmount ?? '0').replace(',', ".")),
+				energyICMSPrice: parseFloat((energyICMSPrice ?? '0').replace(',', ".")),
+				energyICMSTotal: parseFloat((energyICMSTotal ?? '0').replace(',', ".")),
+				energyPrice: parseFloat((energyPrice ?? '0').replace(',', ".")),
+				energyTotal: parseFloat((energyTotal ?? '0').replace(',', ".")),
+				publicLightingContribution: parseFloat((publicLightingContribution ?? '0').replace(',', ".")),
+				totalPrice: parseFloat((totalPrice ?? '0').replace(',', ".")),
+			}
+			return dashboardData;
+		}).sort((a, b) => {
+			const aMonth = months.indexOf(a.referenceMonth.split('/')[0]);
+			const bMonth = months.indexOf(b.referenceMonth.split('/')[0]);
+
+			const aYear = parseInt(a.referenceMonth.split('/')[1]);
+			const bYear = parseInt(b.referenceMonth.split('/')[1]);
+
+			if (aYear !== bYear) {
+				return aYear - bYear;
+			}
+			return aMonth - bMonth;
+		});
+
+		const totals = data.reduce((acc, curr) => {
+			acc.energyAmount += curr.energyAmount;
+			acc.energyCompensatedAmount += curr.energyCompensatedAmount;
+			acc.energyCompensatedPrice += curr.energyCompensatedPrice / data.length;
+			acc.energyCompensatedTotal += curr.energyCompensatedTotal;
+			acc.energyICMSAmount += curr.energyICMSAmount;
+			acc.energyICMSPrice += curr.energyICMSPrice / data.length;
+			acc.energyICMSTotal += curr.energyICMSTotal;
+			acc.energyPrice += curr.energyPrice / data.length;
+			acc.energyTotal += curr.energyTotal;
+			acc.publicLightingContribution += curr.publicLightingContribution;
+			acc.totalPrice += curr.totalPrice;
+			return acc;
+		}, {
+			referenceMonth: 'Total',
+			energyAmount: 0,
+			energyCompensatedAmount: 0,
+			energyCompensatedPrice: 0,
+			energyCompensatedTotal: 0,
+			energyICMSAmount: 0,
+			energyICMSPrice: 0,
+			energyICMSTotal: 0,
+			energyPrice: 0,
+			energyTotal: 0,
+			publicLightingContribution: 0,
+			totalPrice: 0,
+		});
+
+
+
+		return {
+			clientNumber,
+			nOfBills: bills.length,
+			data,
+			totals,
+		}
+	}
 }
+
+
+const months = [
+	'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'
+]
