@@ -16,6 +16,11 @@ export default class ElectricityBillController extends BaseController {
 			{ path: '/', method: 'get', handler: this.getAllBills.bind(this) },
 			{ path: '/:id', method: 'get', handler: this.getBillById.bind(this) },
 			{ path: '/upload', method: 'post', handler: [upload.single('file'), this.uploadFile.bind(this)] },
+			{
+				path: '/upload-multiple',
+				method: 'post',
+				handler: [upload.array('files', 12), this.uploadMultipleFiles.bind(this)],
+			}
 		];
 	}
 
@@ -51,6 +56,29 @@ export default class ElectricityBillController extends BaseController {
 
 			const filePath = req.file.path;
 			const extractedData = await billService.extractDataFromPDF(filePath, true);
+
+			res.status(200).json(extractedData);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async uploadMultipleFiles(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			if (!req.files) {
+				res.status(400).send('No files uploaded.');
+				return;
+			}
+
+			if (!Array.isArray(req.files)) {
+				res.status(400).send('Files must be an array.');
+				return;
+			}
+
+			const filePaths = req.files.map((file: Express.Multer.File) => file.path);
+			const extractedData = await Promise.all(
+				filePaths.map((filePath) => billService.extractDataFromPDF(filePath, true)),
+			);
 
 			res.status(200).json(extractedData);
 		} catch (error) {

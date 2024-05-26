@@ -32,7 +32,6 @@ export class ElectricityBillService {
 		try {
 			const dataBuffer = fs.readFileSync(filePath);
 			const pdfData = await pdfParse(dataBuffer);
-			fs.unlinkSync(filePath);
 			const { text } = pdfData;
 
 			// Extract data from the pdf text with regex
@@ -92,6 +91,7 @@ export class ElectricityBillService {
 			return data;
 		} catch (error) {
 			console.error('Error parsing PDF:', error);
+			fs.unlinkSync(filePath);
 			throw error;
 		}
 	}
