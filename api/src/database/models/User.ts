@@ -1,33 +1,29 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import sequelize from '../index';
 
-interface EnquiryAttributes {
+interface UserAttributes {
 	id: string;
 	name: string;
-	subject: string;
-	body: string;
 	email: string;
-	country: string;
+	password: string;
+	userType: string;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
-interface EnquiryCreationAttributes extends Optional<EnquiryAttributes, 'id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
 
-class Enquiry
-	extends Model<EnquiryAttributes, EnquiryCreationAttributes>
-	implements EnquiryAttributes
-{
+class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
 	public id!: string;
 	public name!: string;
-	public country!: string;
-	public subject!: string;
-	public body!: string;
 	public email!: string;
-
+	public password!: string;
+	public userType!: string;
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
 }
 
-Enquiry.init(
+User.init(
 	{
 		id: {
 			type: DataTypes.UUID,
@@ -38,29 +34,25 @@ Enquiry.init(
 			type: DataTypes.STRING(100),
 			allowNull: false,
 		},
-		country: {
-			type: DataTypes.STRING(100),
-			allowNull: false,
-		},
-		subject: {
-			type: DataTypes.STRING(200),
-			allowNull: false,
-		},
 		email: {
 			type: DataTypes.STRING(100),
 			allowNull: false,
 		},
-		body: {
-			type: DataTypes.STRING(400),
+		password: {
+			type: DataTypes.STRING(100),
+			allowNull: false,
+		},
+		userType: {
+			type: DataTypes.STRING(20),
 			allowNull: false,
 		},
 	},
 	{
 		sequelize,
-		modelName: 'Enquiry',
-		tableName: 'Enquiry',
+		modelName: 'User',
+		tableName: 'Users',
 		timestamps: true,
 	},
 );
 
-export { Enquiry, EnquiryAttributes, EnquiryCreationAttributes };
+export { User, UserAttributes, UserCreationAttributes };

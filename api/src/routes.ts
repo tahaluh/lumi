@@ -1,17 +1,8 @@
 import { Router } from 'express';
-import EnquiryController from './components/enquiry/EnquiryController';
+import UserController from './components/user/UserController';
+import ElectricityBillController from './components/eletricityBill/ElectricityBillController';
 import SystemStatusController from './components/system-status/SystemStatusController';
 import { RouteDefinition } from './types/RouteDefinition';
-
-/**
- *
- * The registerControllerRoutes function creates an Express Router instance and
- * maps route definitions to corresponding HTTP methods
- * such as GET, POST, PUT, PATCH, and DELETE, with their respective handlers.
- * It then returns the configured router.
- * @param routes
- * @returns
- */
 
 function registerControllerRoutes(routes: RouteDefinition[]): Router {
 	const controllerRouter = Router();
@@ -39,15 +30,13 @@ function registerControllerRoutes(routes: RouteDefinition[]): Router {
 	return controllerRouter;
 }
 
-/**
- * Here, you can register routes by instantiating the controller.
- *
- */
 export default function registerRoutes(): Router {
 	const router = Router();
 
+	console.log('Registering routes...');
+
 	// Define an array of controller objects
-	const controllers = [new SystemStatusController(), new EnquiryController()];
+	const controllers = [new SystemStatusController(), new UserController(), new ElectricityBillController()];
 
 	// Dynamically register routes for each controller
 	controllers.forEach((controller) => {
