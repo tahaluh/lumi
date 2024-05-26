@@ -6,13 +6,7 @@ import { RouteDefinition } from '../../types/RouteDefinition';
 const userService = new UserService();
 
 export default class UserController extends BaseController {
-	private userService: UserService;
-
-	public basePath: string = '/users';
-
-	constructor() {
-		super();
-	}
+	public basePath: string = 'users';
 
 	public routes(): RouteDefinition[] {
 		return [
@@ -21,9 +15,9 @@ export default class UserController extends BaseController {
 		];
 	}
 
-	async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+	public async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const users = await this.userService.getAllUsers();
+			const users = await userService.getAllUsers();
 			this.send(res, 200, users);
 		} catch (error) {
 			next(error);
@@ -33,7 +27,7 @@ export default class UserController extends BaseController {
 	async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const userId = req.params.id;
-			const user = await this.userService.getUserById(userId);
+			const user = await userService.getUserById(userId);
 			if (!user) {
 				res.sendStatus(404);
 				return;

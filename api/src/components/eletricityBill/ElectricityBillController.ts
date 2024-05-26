@@ -8,14 +8,6 @@ const billService = new ElectricityBillService();
 export default class ElectricityBillController extends BaseController {
 	public basePath: string = '/electricity-bills';
 
-	constructor() {
-		super();
-	}
-
-	public test(): void {
-		console.log('test');
-	}
-
 	public routes(): RouteDefinition[] {
 		return [
 			{ path: '/', method: 'get', handler: this.getAllBills.bind(this) },

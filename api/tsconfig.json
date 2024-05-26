@@ -15,7 +15,7 @@
     "src/**/**/*.ts",
     "src/**/*.ts",
     "index.js"
-  ],
+, "src/database/config/index.js"  ],
   "exclude": [
     "node_modules"
   ]

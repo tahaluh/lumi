@@ -17,7 +17,9 @@
     "test": "jest --silent --coverage",
     "test:watch": "jest --watch",
     "db:up": "docker-compose -f docker/postgresql/docker-compose.yml up",
-    "db:down": "docker-compose -f docker/postgresql/docker-compose.yml down"
+    "db:down": "docker-compose -f docker/postgresql/docker-compose.yml down",
+    "db:migrate": "yarn sequelize:ts db:migrate",
+    "sequelize:ts": "ts-node ./node_modules/.bin/sequelize"
   },
   "author": "Santosh Shinde",
   "license": "Apache-2.0",
@@ -35,6 +37,7 @@
     "pg": "^8.11.5",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
     "swagger-ui-express": "^5.0.0",
     "typescript": "^5.4.5",
     "winston": "^3.13.0"

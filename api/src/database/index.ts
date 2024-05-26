@@ -1,12 +1,12 @@
 import { Dialect, Sequelize } from 'sequelize';
 import connection from './config';
 
-const { database, user, password, host, dbLogging } = connection;
+const { database, username, password, host, dbLogging, dialect } = connection;
 
-const sequelizeConnection = new Sequelize(database, user, password, {
+const sequelizeConnection = new Sequelize(database, username, password, {
 	host,
 	logging: dbLogging,
-	dialect: 'postgres' as Dialect,
+	dialect: dialect as Dialect,
 });
 
 export default sequelizeConnection;
