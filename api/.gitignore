@@ -18,3 +18,6 @@ logs/
 .env.prod
 .env.staging
 **/.DS_Store
+
+# ignore all inside the uploads folder
+uploads/*
