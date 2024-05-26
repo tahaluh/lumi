@@ -42,7 +42,6 @@ export class ElectricityBillService {
 
 			const extractData = (text: string, pattern: RegExp) => {
 				const match = text.match(pattern);
-				console.log('match:', match?.[1]);
 				return match ? match.slice(1,) : null;
 			};
 
