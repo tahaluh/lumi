@@ -4,20 +4,20 @@ import sequelize from '../index';
 interface ElectricityBillAttributes {
 	uuid: string;
 	clientNumber: string | null;
-	intallationNumber: string | null;
+	installationNumber: string | null;
 	referenceMonth: string | null;
 	dueDate: string | null;
-	energyAmount: number | null;
-	energyPrice: number | null;
-	energyTotal: number | null;
-	energyICMSAmount: number | null;
-	energyICMSPrice: number | null;
-	energyICMSTotal: number | null;
-	energyCompensatedAmount: number | null;
-	energyCompensatedPrice: number | null;
-	energyCompensatedTotal: number | null;
-	publicLightingContribution: number | null;
-	totalPrice: number | null;
+	energyAmount: string | null;
+	energyPrice: string | null;
+	energyTotal: string | null;
+	energyICMSAmount: string | null;
+	energyICMSPrice: string | null;
+	energyICMSTotal: string | null;
+	energyCompensatedAmount: string | null;
+	energyCompensatedPrice: string | null;
+	energyCompensatedTotal: string | null;
+	publicLightingContribution: string | null;
+	totalPrice: string | null;
 	barCode: string | null;
 	pdfUrl: string | null;
 	pdfText: string | null;
@@ -28,20 +28,20 @@ interface ElectricityBillCreationAttributes extends Optional<ElectricityBillAttr
 class ElectricityBill extends Model<ElectricityBillAttributes, ElectricityBillCreationAttributes> implements ElectricityBillAttributes {
 	public uuid!: string;
 	public clientNumber!: string | null;
-	public intallationNumber!: string | null;
+	public installationNumber!: string | null;
 	public referenceMonth!: string | null;
 	public dueDate!: string | null;
-	public energyAmount!: number | null;
-	public energyPrice!: number | null;
-	public energyTotal!: number | null;
-	public energyICMSAmount!: number | null;
-	public energyICMSPrice!: number | null;
-	public energyICMSTotal!: number | null;
-	public energyCompensatedAmount!: number | null;
-	public energyCompensatedPrice!: number | null;
-	public energyCompensatedTotal!: number | null;
-	public publicLightingContribution!: number | null;
-	public totalPrice!: number | null;
+	public energyAmount!: string | null;
+	public energyPrice!: string | null;
+	public energyTotal!: string | null;
+	public energyICMSAmount!: string | null;
+	public energyICMSPrice!: string | null;
+	public energyICMSTotal!: string | null;
+	public energyCompensatedAmount!: string | null;
+	public energyCompensatedPrice!: string | null;
+	public energyCompensatedTotal!: string | null;
+	public publicLightingContribution!: string | null;
+	public totalPrice!: string | null;
 	public barCode!: string | null;
 	public pdfUrl!: string | null;
 	public pdfText!: string | null;
@@ -61,7 +61,7 @@ ElectricityBill.init(
 			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
-		intallationNumber: {
+		installationNumber: {
 			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
@@ -74,47 +74,47 @@ ElectricityBill.init(
 			allowNull: true,
 		},
 		energyAmount: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyPrice: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyTotal: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyICMSAmount: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyICMSPrice: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyICMSTotal: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyCompensatedAmount: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyCompensatedPrice: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		energyCompensatedTotal: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		publicLightingContribution: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		totalPrice: {
-			type: DataTypes.FLOAT,
+			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
 		barCode: {
@@ -126,7 +126,7 @@ ElectricityBill.init(
 			allowNull: true,
 		},
 		pdfText: {
-			type: DataTypes.TEXT,
+			type: DataTypes.JSON,
 			allowNull: true,
 		},
 	},

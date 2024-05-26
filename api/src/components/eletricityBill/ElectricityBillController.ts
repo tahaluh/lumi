@@ -50,7 +50,7 @@ export default class ElectricityBillController extends BaseController {
 			}
 
 			const filePath = req.file.path;
-			const extractedData = await billService.extractDataFromPDF(filePath, false);
+			const extractedData = await billService.extractDataFromPDF(filePath, true);
 
 			res.status(200).json(extractedData);
 		} catch (error) {

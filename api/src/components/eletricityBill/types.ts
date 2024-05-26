@@ -3,26 +3,26 @@ export type CreateElectricityBillDTO = {
     pdfText: string;
 
     clientNumber: string;
-    intallationNumber: string;
+    installationNumber: string;
 
     referenceMonth: string;
     dueDate: string;
 
-    energyAmount: number;
-    energyPrice: number;
-    energyTotal: number;
+    energyAmount: string;
+    energyPrice: string;
+    energyTotal: string;
 
-    energyICMSAmount: number;
-    energyICMSPrice: number;
-    energyICMSTotal: number;
+    energyICMSAmount: string;
+    energyICMSPrice: string;
+    energyICMSTotal: string;
 
-    energyCompensatedAmount: number;
-    energyCompensatedPrice: number;
-    energyCompensatedTotal: number;
+    energyCompensatedAmount: string;
+    energyCompensatedPrice: string;
+    energyCompensatedTotal: string;
 
-    publicLightingContribution: number;
+    publicLightingContribution: string;
 
-    totalPrice: number;
+    totalPrice: string;
 
     barCode: string;
 };

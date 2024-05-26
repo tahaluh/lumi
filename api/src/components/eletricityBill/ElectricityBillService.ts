@@ -104,26 +104,26 @@ export class ElectricityBillService {
 				pdfUrl: data.pdfUrl,
 				pdfText: data.text,
 				clientNumber: noDoCliente,
-				intallationNumber: noDaInstalacao,
+				installationNumber: noDaInstalacao,
 				referenceMonth: mesReferente,
 				dueDate: vencimento,
 				barCode: codBarras,
 
-				energyAmount: parseFloat(energiaEletrica.quantidade),
-				energyPrice: parseFloat(energiaEletrica.preco),
-				energyTotal: parseFloat(energiaEletrica.valor),
+				energyAmount: energiaEletrica.quantidade,
+				energyPrice: energiaEletrica.preco,
+				energyTotal: energiaEletrica.valor,
 
-				energyICMSAmount: parseFloat(enegiaICMS.quantidade),
-				energyICMSPrice: parseFloat(enegiaICMS.preco),
-				energyICMSTotal: parseFloat(enegiaICMS.valor),
+				energyICMSAmount: enegiaICMS.quantidade,
+				energyICMSPrice: enegiaICMS.preco,
+				energyICMSTotal: enegiaICMS.valor,
 
-				energyCompensatedAmount: parseFloat(energiaCompensada.quantidade),
-				energyCompensatedPrice: parseFloat(energiaCompensada.preco),
-				energyCompensatedTotal: parseFloat(energiaCompensada.valor),
+				energyCompensatedAmount: energiaCompensada.quantidade,
+				energyCompensatedPrice: energiaCompensada.preco,
+				energyCompensatedTotal: energiaCompensada.valor,
 
-				publicLightingContribution: parseFloat(contribIlum),
+				publicLightingContribution: contribIlum,
 
-				totalPrice: parseFloat(valorAPagar),
+				totalPrice: valorAPagar,
 			}
 
 			const bill = await this.create(billData);

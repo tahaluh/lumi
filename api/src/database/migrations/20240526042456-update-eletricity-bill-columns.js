@@ -8,6 +8,10 @@ module.exports = {
     await queryInterface.removeColumn('ElectricityBills', 'totalAmount');
     await queryInterface.removeColumn('ElectricityBills', 'energyCompensated');
     await queryInterface.removeColumn('ElectricityBills', 'details');
+    await queryInterface.addColumn('ElectricityBills', 'installationNumber', {
+      type: Sequelize.STRING(50),
+      allowNull: true,
+    });
     await queryInterface.addColumn('ElectricityBills', 'referenceMonth', {
       type: Sequelize.STRING(50),
       allowNull: true,
@@ -17,51 +21,51 @@ module.exports = {
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyAmount', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyPrice', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyTotal', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyICMSAmount', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyICMSPrice', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyICMSTotal', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyCompensatedAmount', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyCompensatedPrice', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyCompensatedTotal', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'publicLightingContribution', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'totalPrice', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'barCode', {
-      type: Sequelize.STRING(50),
+      type: Sequelize.STRING(64),
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'pdfUrl', {
@@ -69,7 +73,7 @@ module.exports = {
       allowNull: true,
     });
     await queryInterface.addColumn('ElectricityBills', 'pdfText', {
-      type: Sequelize.TEXT,
+      type: Sequelize.JSON,
       allowNull: true,
     });
   },
@@ -80,21 +84,22 @@ module.exports = {
       allowNull: false,
     });
     await queryInterface.addColumn('ElectricityBills', 'consumedElectricity', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: false,
     });
     await queryInterface.addColumn('ElectricityBills', 'totalAmount', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: false,
     });
     await queryInterface.addColumn('ElectricityBills', 'energyCompensated', {
-      type: Sequelize.FLOAT,
+      type: Sequelize.STRING(50),
       allowNull: false,
     });
     await queryInterface.addColumn('ElectricityBills', 'details', {
       type: Sequelize.STRING(400),
       allowNull: false,
     });
+    await queryInterface.removeColumn('ElectricityBills', 'installationNumber');
     await queryInterface.removeColumn('ElectricityBills', 'referenceMonth');
     await queryInterface.removeColumn('ElectricityBills', 'dueDate');
     await queryInterface.removeColumn('ElectricityBills', 'energyAmount');
