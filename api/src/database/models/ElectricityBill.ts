@@ -5,19 +5,20 @@ interface ElectricityBillAttributes {
 	uuid: string;
 	clientNumber: string | null;
 	installationNumber: string | null;
-	referenceMonth: string | null;
+	referenceYear: number | null;
+	referenceMonth: number | null;
 	dueDate: string | null;
-	energyAmount: string | null;
-	energyPrice: string | null;
-	energyTotal: string | null;
-	energyICMSAmount: string | null;
-	energyICMSPrice: string | null;
-	energyICMSTotal: string | null;
-	energyCompensatedAmount: string | null;
-	energyCompensatedPrice: string | null;
-	energyCompensatedTotal: string | null;
-	publicLightingContribution: string | null;
-	totalPrice: string | null;
+	energyAmount: number | null;
+	energyPrice: number | null;
+	energyTotal: number | null;
+	energyICMSAmount: number | null;
+	energyICMSPrice: number | null;
+	energyICMSTotal: number | null;
+	energyCompensatedAmount: number | null;
+	energyCompensatedPrice: number | null;
+	energyCompensatedTotal: number | null;
+	publicLightingContribution: number | null;
+	totalPrice: number | null;
 	barCode: string | null;
 	pdfUrl: string | null;
 	pdfText: string | null;
@@ -29,19 +30,20 @@ class ElectricityBill extends Model<ElectricityBillAttributes, ElectricityBillCr
 	public uuid!: string;
 	public clientNumber!: string | null;
 	public installationNumber!: string | null;
-	public referenceMonth!: string | null;
+	public referenceYear!: number | null;
+	public referenceMonth!: number | null;
 	public dueDate!: string | null;
-	public energyAmount!: string | null;
-	public energyPrice!: string | null;
-	public energyTotal!: string | null;
-	public energyICMSAmount!: string | null;
-	public energyICMSPrice!: string | null;
-	public energyICMSTotal!: string | null;
-	public energyCompensatedAmount!: string | null;
-	public energyCompensatedPrice!: string | null;
-	public energyCompensatedTotal!: string | null;
-	public publicLightingContribution!: string | null;
-	public totalPrice!: string | null;
+	public energyAmount!: number | null;
+	public energyPrice!: number | null;
+	public energyTotal!: number | null;
+	public energyICMSAmount!: number | null;
+	public energyICMSPrice!: number | null;
+	public energyICMSTotal!: number | null;
+	public energyCompensatedAmount!: number | null;
+	public energyCompensatedPrice!: number | null;
+	public energyCompensatedTotal!: number | null;
+	public publicLightingContribution!: number | null;
+	public totalPrice!: number | null;
 	public barCode!: string | null;
 	public pdfUrl!: string | null;
 	public pdfText!: string | null;
@@ -65,8 +67,12 @@ ElectricityBill.init(
 			type: DataTypes.STRING(50),
 			allowNull: true,
 		},
+		referenceYear: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+		},
 		referenceMonth: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.INTEGER,
 			allowNull: true,
 		},
 		dueDate: {
@@ -74,47 +80,47 @@ ElectricityBill.init(
 			allowNull: true,
 		},
 		energyAmount: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyPrice: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyTotal: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyICMSAmount: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyICMSPrice: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyICMSTotal: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyCompensatedAmount: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyCompensatedPrice: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		energyCompensatedTotal: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		publicLightingContribution: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		totalPrice: {
-			type: DataTypes.STRING(50),
+			type: DataTypes.FLOAT(),
 			allowNull: true,
 		},
 		barCode: {

@@ -21,7 +21,6 @@ const addErrorHandler = (
 		const body: IError | string = {
 			fields: err.fields,
 			message: err.message || 'An error occurred during the request.',
-			name: err.name,
 			status,
 		};
 		res.status(status);

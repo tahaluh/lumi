@@ -8,7 +8,6 @@ export interface IError {
 		};
 	};
 	message: string;
-	name: string;
 }
 
 class ApiError extends Error implements IError {
@@ -26,10 +25,6 @@ class ApiError extends Error implements IError {
 		super();
 		this.message = msg;
 		this.status = statusCode;
-		this.name =
-			statusCode === StatusCodes.NOT_FOUND
-				? ReasonPhrases.NOT_FOUND
-				: name;
 	}
 }
 

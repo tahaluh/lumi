@@ -11,27 +11,79 @@ module.exports = {
       },
       clientNumber: {
         type: Sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
       },
-      month: {
+      installationNumber: {
         type: Sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
       },
-      consumedElectricity: {
+      referenceMonth: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      referenceYear: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      dueDate: {
+        type: Sequelize.STRING(20),
+        allowNull: true,
+      },
+      energyAmount: {
         type: Sequelize.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
-      totalAmount: {
+      energyPrice: {
         type: Sequelize.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
-      energyCompensated: {
+      energyTotal: {
         type: Sequelize.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
-      details: {
-        type: Sequelize.STRING(400),
-        allowNull: false,
+      energyICMSAmount: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      energyICMSPrice: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      energyICMSTotal: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      energyCompensatedAmount: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      energyCompensatedPrice: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      energyCompensatedTotal: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      publicLightingContribution: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      totalPrice: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      barCode: {
+        type: Sequelize.STRING(64),
+        allowNull: true,
+      },
+      pdfUrl: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      pdfText: {
+        type: Sequelize.JSON,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

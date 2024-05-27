@@ -5,24 +5,25 @@ export type CreateElectricityBillDTO = {
     clientNumber: string;
     installationNumber: string;
 
-    referenceMonth: string;
+    referenceYear: number;
+    referenceMonth: number;
     dueDate: string;
 
-    energyAmount: string;
-    energyPrice: string;
-    energyTotal: string;
+    energyAmount: number;
+    energyPrice: number;
+    energyTotal: number;
 
-    energyICMSAmount: string;
-    energyICMSPrice: string;
-    energyICMSTotal: string;
+    energyICMSAmount: number;
+    energyICMSPrice: number;
+    energyICMSTotal: number;
 
-    energyCompensatedAmount: string;
-    energyCompensatedPrice: string;
-    energyCompensatedTotal: string;
+    energyCompensatedAmount: number;
+    energyCompensatedPrice: number;
+    energyCompensatedTotal: number;
 
-    publicLightingContribution: string;
+    publicLightingContribution: number;
 
-    totalPrice: string;
+    totalPrice: number;
 
     barCode: string;
 };
@@ -35,6 +36,7 @@ export type ElectricityBillPDF = {
     text: string;
     noDoCliente: string | null;
     noDaInstalacao: string | null;
+    anoReferente: string | null;
     mesReferente: string | null;
     vencimento: string | null;
     valorAPagar: string | null;
@@ -61,13 +63,16 @@ export type ClientDashboardResponse = {
     clientNumber: string;
     nOfBills: number;
 
-    data: ElectricityBillDashboardData[];
-    totals: ElectricityBillDashboardData;
+    data: ElectricityBillDashboardDataByDate[];
+    totals: TotalElectricityBillDashboardData;
 };
 
-export type ElectricityBillDashboardData = {
-    referenceMonth: string;
+export type ElectricityBillDashboardDataByDate = {
+    referenceYear: number;
+    referenceMonth: number;
+} & TotalElectricityBillDashboardData;
 
+export type TotalElectricityBillDashboardData = {
     energyAmount: number;
     energyPrice: number;
     energyTotal: number;

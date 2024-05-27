@@ -1,13 +1,12 @@
 import { ElectricityBill, ElectricityBillAttributes, ElectricityBillCreationAttributes } from '../../database/models/ElectricityBill';
 import logger from '../../lib/logger';
 import pdfParse from 'pdf-parse';
-import { ClientDashboardResponse, CreateElectricityBillDTO, ElectricityBillDashboardData, ElectricityBillPDF, FilterQueryParams } from './types';
+import { ClientDashboardResponse, CreateElectricityBillDTO, ElectricityBillDashboardDataByDate, ElectricityBillPDF, FilterQueryParams } from './types';
 import fs from 'fs';
+import { shortMonths } from '../../utils/months';
+import ApiError from '../../abstractions/ApiError';
 
 
-const months = [
-	'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'
-]
 export class ElectricityBillService {
 	async getAllBills(): Promise<ElectricityBillAttributes[]> {
 		try {
@@ -40,13 +39,16 @@ export class ElectricityBillService {
 
 			const { noCliente_nInstalacao_Matches, mesRef_Vencimento_Valor_Matches, energiaEletrica_Qntd_Preco_Valor_Matches, energiaICMS_Qntd_Preco_Valor_Matches, energiaCompensada_Qntd_Preco_Valor_Matches, contribIlumMatches, codBarrasMatches } = this.matchData(text);
 
+			const sliptedMonth = mesRef_Vencimento_Valor_Matches?.[0]?.split('/')[0] ?? null
+			const sliptedYear = mesRef_Vencimento_Valor_Matches?.[0]?.split('/')[1] ?? null
 
-			const data = {
+			const rawData = {
 				pdfUrl: filePath,
 				text,
 				noDoCliente: noCliente_nInstalacao_Matches?.[0] ?? null,
 				noDaInstalacao: noCliente_nInstalacao_Matches?.[1] ?? null,
-				mesReferente: mesRef_Vencimento_Valor_Matches?.[0] ?? null,
+				anoReferente: sliptedYear,
+				mesReferente: sliptedMonth,
 				vencimento: mesRef_Vencimento_Valor_Matches?.[1] ?? null,
 				valorAPagar: mesRef_Vencimento_Valor_Matches?.[2] ?? null,
 				energiaEletrica: {
@@ -68,49 +70,48 @@ export class ElectricityBillService {
 				codBarras: codBarrasMatches?.[0] ?? null,
 			}
 
-			if (saveToDatabase) {
-				await this.createByPDFData(data);
+
+			const billData: CreateElectricityBillDTO = {
+				pdfUrl: "",//rawData.pdfUrl,
+				pdfText: "", //rawData.text,
+				clientNumber: rawData.noDoCliente,
+				installationNumber: rawData.noDaInstalacao,
+				referenceYear: rawData.anoReferente ? parseInt(rawData.anoReferente) : null,
+				referenceMonth: rawData.mesReferente ? shortMonths.indexOf(rawData.mesReferente) + 1 : null,
+				dueDate: rawData.vencimento,
+				barCode: rawData.codBarras,
+				// save the parseFloat number or if its null, save null
+				energyAmount: rawData.energiaEletrica.quantidade ? parseFloat(rawData.energiaEletrica.quantidade.replace(',', '.')) : null,
+				energyPrice: rawData.energiaEletrica.preco ? parseFloat(rawData.energiaEletrica.preco.replace(',', '.')) : null,
+				energyTotal: rawData.energiaEletrica.valor ? parseFloat(rawData.energiaEletrica.valor.replace(',', '.')) : null,
+
+				energyICMSAmount: rawData.enegiaICMS.quantidade ? parseFloat(rawData.enegiaICMS.quantidade.replace(',', '.')) : null,
+				energyICMSPrice: rawData.enegiaICMS.preco ? parseFloat(rawData.enegiaICMS.preco.replace(',', '.')) : null,
+				energyICMSTotal: rawData.enegiaICMS.valor ? parseFloat(rawData.enegiaICMS.valor.replace(',', '.')) : null,
+
+				energyCompensatedAmount: rawData.energiaCompensada.quantidade ? parseFloat(rawData.energiaCompensada.quantidade.replace(',', '.')) : null,
+				energyCompensatedPrice: rawData.energiaCompensada.preco ? parseFloat(rawData.energiaCompensada.preco.replace(',', '.')) : null,
+				energyCompensatedTotal: rawData.energiaCompensada.valor ? parseFloat(rawData.energiaCompensada.valor.replace(',', '.')) : null,
+
+				publicLightingContribution: rawData.contribIlum ? parseFloat(rawData.contribIlum.replace(',', '.')) : null,
+
+				totalPrice: rawData.valorAPagar ? parseFloat(rawData.valorAPagar.replace(',', '.')) : null,
 			}
 
-			return data;
+			if (saveToDatabase) {
+				await this.createByPDFData(billData);
+			}
+
+			return rawData;
 		} catch (error) {
 			console.error('Error parsing PDF:', error);
 			fs.unlinkSync(filePath);
 			throw error;
 		}
 	}
-
-	async createByPDFData(data: ElectricityBillPDF): Promise<ElectricityBillAttributes> {
+	async createByPDFData(data: CreateElectricityBillDTO): Promise<ElectricityBillAttributes> {
 		try {
-			const { noDoCliente, noDaInstalacao, mesReferente, vencimento, valorAPagar, energiaEletrica, enegiaICMS, energiaCompensada, contribIlum, codBarras } = data;
-
-			const billData: CreateElectricityBillDTO = {
-				pdfUrl: data.pdfUrl,
-				pdfText: data.text,
-				clientNumber: noDoCliente,
-				installationNumber: noDaInstalacao,
-				referenceMonth: mesReferente,
-				dueDate: vencimento,
-				barCode: codBarras,
-
-				energyAmount: energiaEletrica.quantidade,
-				energyPrice: energiaEletrica.preco,
-				energyTotal: energiaEletrica.valor,
-
-				energyICMSAmount: enegiaICMS.quantidade,
-				energyICMSPrice: enegiaICMS.preco,
-				energyICMSTotal: enegiaICMS.valor,
-
-				energyCompensatedAmount: energiaCompensada.quantidade,
-				energyCompensatedPrice: energiaCompensada.preco,
-				energyCompensatedTotal: energiaCompensada.valor,
-
-				publicLightingContribution: contribIlum,
-
-				totalPrice: valorAPagar,
-			}
-
-			const bill = await this.create(billData);
+			const bill = await this.create(data);
 
 			return bill;
 		} catch (error) {
@@ -130,7 +131,7 @@ export class ElectricityBillService {
 				});
 
 				if (existingBill) {
-					throw new Error('Bill already exists');
+					throw new ApiError('Bill already exists', 400);
 				}
 			}
 			const bill = await ElectricityBill.create(data);
@@ -199,28 +200,28 @@ export class ElectricityBillService {
 		});
 
 		const data = bills.map(bill => {
-			const { energyAmount, energyCompensatedAmount, energyCompensatedPrice, energyCompensatedTotal, energyICMSAmount, energyICMSPrice, energyICMSTotal, energyPrice, energyTotal, referenceMonth, publicLightingContribution, totalPrice } = bill;
-			const dashboardData: ElectricityBillDashboardData = {
+			const { energyAmount, energyCompensatedAmount, energyCompensatedPrice, energyCompensatedTotal, energyICMSAmount, energyICMSPrice, energyICMSTotal, energyPrice, energyTotal, referenceYear, referenceMonth, publicLightingContribution, totalPrice } = bill;
+			const dashboardData: ElectricityBillDashboardDataByDate = {
+				referenceYear,
 				referenceMonth,
-				energyAmount: parseFloat((energyAmount ?? '0').replace(',', ".")),
-				energyCompensatedAmount: parseFloat((energyCompensatedAmount ?? '0').replace(',', ".")),
-				energyCompensatedPrice: parseFloat((energyCompensatedPrice ?? '0').replace(',', ".")),
-				energyCompensatedTotal: parseFloat((energyCompensatedTotal ?? '0').replace(',', ".")),
-				energyICMSAmount: parseFloat((energyICMSAmount ?? '0').replace(',', ".")),
-				energyICMSPrice: parseFloat((energyICMSPrice ?? '0').replace(',', ".")),
-				energyICMSTotal: parseFloat((energyICMSTotal ?? '0').replace(',', ".")),
-				energyPrice: parseFloat((energyPrice ?? '0').replace(',', ".")),
-				energyTotal: parseFloat((energyTotal ?? '0').replace(',', ".")),
-				publicLightingContribution: parseFloat((publicLightingContribution ?? '0').replace(',', ".")),
-				totalPrice: parseFloat((totalPrice ?? '0').replace(',', ".")),
+				energyAmount: energyAmount,
+				energyCompensatedAmount: energyCompensatedAmount,
+				energyCompensatedPrice: energyCompensatedPrice,
+				energyCompensatedTotal: energyCompensatedTotal,
+				energyICMSAmount: energyICMSAmount,
+				energyICMSPrice: energyICMSPrice,
+				energyICMSTotal: energyICMSTotal,
+				energyPrice: energyPrice,
+				energyTotal: energyTotal,
+				publicLightingContribution: publicLightingContribution,
+				totalPrice: totalPrice,
 			}
 			return dashboardData;
 		}).sort((a, b) => {
-			const aMonth = months.indexOf(a.referenceMonth.split('/')[0]);
-			const bMonth = months.indexOf(b.referenceMonth.split('/')[0]);
-
-			const aYear = parseInt(a.referenceMonth.split('/')[1]);
-			const bYear = parseInt(b.referenceMonth.split('/')[1]);
+			const aYear = a.referenceYear ?? 0;
+			const bYear = b.referenceYear ?? 0;
+			const aMonth = a.referenceMonth ?? 0;
+			const bMonth = b.referenceMonth ?? 0;
 
 			if (aYear !== bYear) {
 				return aYear - bYear;
@@ -242,7 +243,6 @@ export class ElectricityBillService {
 			acc.totalPrice += curr.totalPrice;
 			return acc;
 		}, {
-			referenceMonth: 'Total',
 			energyAmount: 0,
 			energyCompensatedAmount: 0,
 			energyCompensatedPrice: 0,
