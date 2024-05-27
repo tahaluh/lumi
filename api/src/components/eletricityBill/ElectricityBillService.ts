@@ -72,8 +72,8 @@ export class ElectricityBillService {
 
 
 			const billData: CreateElectricityBillDTO = {
-				pdfUrl: "",//rawData.pdfUrl,
-				pdfText: "", //rawData.text,
+				pdfUrl: rawData.pdfUrl,
+				pdfText: rawData.text,
 				clientNumber: rawData.noDoCliente,
 				installationNumber: rawData.noDaInstalacao,
 				referenceYear: rawData.anoReferente ? parseInt(rawData.anoReferente) : null,
