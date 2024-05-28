@@ -83,6 +83,23 @@ const Dashboard = Loader(
 );
 
 const routes: RouteObject[] = [
+
+  {
+    path: '',
+    element: <SidebarLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Navigate to="dashboard" replace />
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />
+      }
+    ]
+  },
+
+  // Template Pages
   {
     path: '',
     element: <BaseLayout />,
@@ -122,18 +139,6 @@ const routes: RouteObject[] = [
       }
     ]
   },
-  {
-    path: '',
-    element: <SidebarLayout />,
-    children: [
-      {
-        path: 'dashboard',
-        element: <Dashboard />
-      }
-    ]
-  },
-
-  // Template Pages
   {
     path: 'dashboards',
     element: <SidebarLayout />,
