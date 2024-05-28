@@ -67,7 +67,7 @@ export default class App {
 				'*'
 			],
 		};
-		this.express.use(cors(corsOptions));
+		this.express.use(cors());
 	}
 
 	private parseRequestHeader(

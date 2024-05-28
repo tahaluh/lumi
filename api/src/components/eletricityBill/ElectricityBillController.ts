@@ -14,6 +14,11 @@ export default class ElectricityBillController extends BaseController {
 	public routes(): RouteDefinition[] {
 		return [
 			{ path: '/', method: 'get', handler: this.getAllBills.bind(this) },
+			{
+				path: '/dashboard',
+				method: 'get',
+				handler: this.getDashboard.bind(this),
+			},
 			{ path: '/:id', method: 'get', handler: this.getBillById.bind(this) },
 			{ path: '/client/:clientNumber/', method: 'get', handler: this.getBillsByClientNumber.bind(this) },
 			{ path: '/upload', method: 'post', handler: [upload.single('file'), this.uploadFile.bind(this)] },
@@ -25,11 +30,6 @@ export default class ElectricityBillController extends BaseController {
 				method: 'post',
 				handler: [upload.array('files', 12), this.uploadMultipleFiles.bind(this)],
 			},
-			{
-				path: '/dashboard',
-				method: 'get',
-				handler: this.getDashboard.bind(this),
-			}
 		];
 	}
 
