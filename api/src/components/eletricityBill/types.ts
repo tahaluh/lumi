@@ -28,7 +28,7 @@ export type CreateElectricityBillDTO = {
     barCode: string;
 };
 
-export type FilterQueryParams = { startDate: string, endDate: string, limit?: string, offset?: string }
+export type FilterQueryParams = { limit?: string, offset?: string, clientNumber: string, year: string };
 
 
 export type ElectricityBillPDF = {

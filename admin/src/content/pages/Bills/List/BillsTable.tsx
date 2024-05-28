@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, useState } from 'react';
+import { FC, ChangeEvent, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Tooltip,
@@ -21,32 +21,41 @@ import {
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { ElectricityBillAttributes } from '../types/ElectricityBill';
-
-interface RecentOrdersTableProps {
-  className?: string;
-  bills: ElectricityBillAttributes[];
-}
+import { fetchBills } from '../services/fetchBills';
 interface Filters {
   year?: string;
   month?: string;
   clientNumber?: string;
 }
 
-const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
+function BillsTable() {
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(6);
   const [filters, setFilters] = useState<Filters>({
     year: 'all',
     month: 'all',
     clientNumber: null
   });
 
+  useEffect(() => {
+    setPage(0);
+  }, [filters]);
+
+  const { data: dataBills } = fetchBills({
+    clientNumber: filters.clientNumber,
+    year: filters.year,
+    limit: limit,
+    offset: page * limit
+  });
+
+  const bills: ElectricityBillAttributes[] = dataBills?.length ? dataBills : [];
 
   const handlePageChange = (event: any, newPage: number): void => {
     setPage(newPage);
   };
 
   const handleLimitChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setPage(0);
     setLimit(parseInt(event.target.value));
   };
 
@@ -125,11 +134,11 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bills.map((bill) => {
+            {(bills).map((bill) => {
               return (
                 <TableRow
                   hover
-                  key={bill.uuid}
+                  key={bill.uuid ?? 'NULL'}
                 >
                   <TableCell>
                     <Typography
@@ -139,7 +148,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.clientNumber}
+                      {bill.clientNumber ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -151,7 +160,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.referenceMonth}
+                      {bill.referenceMonth ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -163,7 +172,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.referenceYear}
+                      {bill.referenceYear ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -175,7 +184,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyAmount}
+                      {bill.energyAmount ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -187,7 +196,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyTotal}
+                      {bill.energyTotal ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -199,7 +208,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyICMSAmount}
+                      {bill.energyICMSAmount ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -211,7 +220,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyICMSTotal}
+                      {bill.energyICMSTotal ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -223,7 +232,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyCompensatedAmount}
+                      {bill.energyCompensatedAmount ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -235,7 +244,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.energyCompensatedTotal}
+                      {bill.energyCompensatedTotal ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -247,7 +256,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.publicLightingContribution}
+                      {bill.publicLightingContribution ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -259,7 +268,7 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
                       gutterBottom
                       noWrap
                     >
-                      {bill.totalPrice}
+                      {bill.totalPrice ?? 'NULL'}
                     </Typography>
                   </TableCell>
 
@@ -289,12 +298,12 @@ const BillsTable: FC<RecentOrdersTableProps> = ({ bills }) => {
       <Box p={2}>
         <TablePagination
           component="div"
-          count={bills.length}
+          count={bills.length == limit ? -1 : (page + 1) * limit + 1}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
           rowsPerPage={limit}
-          rowsPerPageOptions={[5, 10, 25, 30]}
+          rowsPerPageOptions={[6, 12, 24, 30]}
         />
       </Box>
     </Card>

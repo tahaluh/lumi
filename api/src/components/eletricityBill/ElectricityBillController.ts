@@ -13,14 +13,13 @@ export default class ElectricityBillController extends BaseController {
 
 	public routes(): RouteDefinition[] {
 		return [
-			{ path: '/', method: 'get', handler: this.getAllBills.bind(this) },
+			{ path: '/', method: 'get', handler: this.getBills.bind(this) },
 			{
 				path: '/dashboard',
 				method: 'get',
 				handler: this.getDashboard.bind(this),
 			},
 			{ path: '/:id', method: 'get', handler: this.getBillById.bind(this) },
-			{ path: '/client/:clientNumber/', method: 'get', handler: this.getBillsByClientNumber.bind(this) },
 			{ path: '/upload', method: 'post', handler: [upload.single('file'), this.uploadFile.bind(this)] },
 			{
 				path: '/download/:id', method: 'get', handler: this.downloadBill.bind(this),
@@ -118,20 +117,19 @@ export default class ElectricityBillController extends BaseController {
 		}
 	}
 
-	async getBillsByClientNumber(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async getBills(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const clientNumber = req.params.clientNumber;
-			const { startDate, endDate, limit, offset } = req.query;
+			const { clientNumber, year, limit, offset } = req.query;
 
 			// Convertendo os valores para string
-			const startDateString = startDate as string;
-			const endDateString = endDate as string;
+			const clientNumberString = clientNumber as string;
+			const yearString = year as string;
 			const limitString = limit as string;
 			const offsetString = offset as string;
 
-			const bills = await billService.getBillsByClientNumber(clientNumber, {
-				startDate: startDateString,
-				endDate: endDateString,
+			const bills = await billService.getBills({
+				clientNumber: clientNumberString,
+				year: yearString,
 				limit: limitString,
 				offset: offsetString,
 			});

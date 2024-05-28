@@ -14,7 +14,6 @@ export const fetchDashboardData = (
     const parsedParams = parseSearchParams(filter ?? {});
     const response = useSWR<ClientDashboardResponse, Error>(`/api/v1/electricity-bills/dashboard?${parsedParams}`);
 
-
     return response;
 };
 

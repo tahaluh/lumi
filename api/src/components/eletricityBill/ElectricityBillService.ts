@@ -267,24 +267,11 @@ export class ElectricityBillService {
 		}
 	}
 
-	async getBillsByClientNumber(clientNumber: string, params: FilterQueryParams): Promise<ElectricityBillAttributes[]> {
+	async getBills(params: FilterQueryParams): Promise<ElectricityBillAttributes[]> {
 		const where: any = {
-			clientNumber
+			...(params.clientNumber ? { clientNumber: params.clientNumber } : {}),
+			...(params.year && params.year !== 'all' ? { referenceYear: parseInt(params.year) } : {})
 		};
-
-		if (params.startDate) {
-			where.referenceMonth = {
-				...where.referenceMonth,
-				$gte: params.startDate
-			}
-		}
-
-		if (params.endDate) {
-			where.referenceMonth = {
-				...where.referenceMonth,
-				$lte: params.endDate
-			}
-		}
 
 		const bills = await ElectricityBill.findAll({
 			where,
