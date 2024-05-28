@@ -39,10 +39,16 @@ $ cd ./api
 $ npm i
 ```
 
-3. inicialize o container docker com o banco de api
+3. inicialize o container docker com o banco e api
 
 ```bash
 $ docker-compose up
+```
+
+4. execute as migrations
+
+```bash
+$ npm run sequelize-cli db:migrate
 ```
 
 ### Client
