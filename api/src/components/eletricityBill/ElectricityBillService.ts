@@ -192,10 +192,10 @@ export class ElectricityBillService {
 		}
 	}
 
-	async getClientDashboard(clientNumber: string, year: string = 'all'): Promise<ClientDashboardResponse> {
+	async getClientDashboard(clientNumber?: string, year: string = 'all'): Promise<ClientDashboardResponse> {
 		const bills = await ElectricityBill.findAll({
 			where: {
-				clientNumber,
+				...(clientNumber ? { clientNumber } : {}),
 				...(year !== 'all' ? { referenceYear: parseInt(year) } : {})
 			}
 		});

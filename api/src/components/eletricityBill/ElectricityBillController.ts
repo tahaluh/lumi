@@ -26,9 +26,9 @@ export default class ElectricityBillController extends BaseController {
 				handler: [upload.array('files', 12), this.uploadMultipleFiles.bind(this)],
 			},
 			{
-				path: '/client/:clientNumber/dashboard',
+				path: '/dashboard',
 				method: 'get',
-				handler: this.getClientDashboard.bind(this),
+				handler: this.getDashboard.bind(this),
 			}
 		];
 	}
@@ -95,10 +95,9 @@ export default class ElectricityBillController extends BaseController {
 		}
 	}
 
-	async getClientDashboard(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async getDashboard(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const clientNumber = req.params.clientNumber;
-			const year = req.query.year as string;
+			const { clientNumber, year } = req.query as { clientNumber: string, year: string };
 			const dashboardData = await billService.getClientDashboard(clientNumber, year);
 			this.send(res, 200, dashboardData);
 		} catch (error) {
