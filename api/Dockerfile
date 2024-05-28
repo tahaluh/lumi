@@ -1,20 +1,14 @@
-FROM node:iron-bookworm-slim
+FROM node:20.11.1
 
-# Create a new user named "nodeuser"
-RUN useradd --user-group --create-home --system --skel /dev/null --shell /bin/false nodeuser
+COPY package.json package-lock.json /var/lumi/
 
-# Switch to the new user
-USER nodeuser
+WORKDIR /var/lumi
 
-ENV NODE_ENV production
-WORKDIR /home/nodeuser/app
-COPY package.json ./
-COPY tsconfig.json ./
-COPY swagger.json ./
-COPY .env ./
-COPY .sequelizerc ./
-COPY src/ ./src
-RUN npm install --ignore-scripts
+COPY . /var/lumi
+
+RUN npm install
+
+EXPOSE 8080
+
 RUN npm run build
-EXPOSE 8080 
-CMD npm start
+CMD ["npm", "run", "dev"]
