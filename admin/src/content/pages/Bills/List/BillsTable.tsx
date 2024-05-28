@@ -22,6 +22,8 @@ import {
 import DownloadIcon from '@mui/icons-material/Download';
 import { ElectricityBillAttributes } from '../types/ElectricityBill';
 import { fetchBills } from '../services/fetchBills';
+import { downloadBill } from '../services/downloadBill';
+import { useSnackbar } from 'notistack';
 interface Filters {
   year?: string;
   month?: string;
@@ -29,6 +31,7 @@ interface Filters {
 }
 
 function BillsTable() {
+  const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(6);
   const [filters, setFilters] = useState<Filters>({
@@ -60,6 +63,15 @@ function BillsTable() {
   };
 
   const theme = useTheme();
+
+  const handleDownloadBill = async (uuid: string) => {
+    const res = await downloadBill(uuid);
+    if (res.error) {
+      enqueueSnackbar(`${res.error}`, { variant: 'error' });
+      return;
+    }
+    enqueueSnackbar(`Fatura baixada com sucesso`, { variant: 'success' });
+  };
 
   return (
     <Card>
@@ -283,6 +295,9 @@ function BillsTable() {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => {
+                          handleDownloadBill(bill.uuid)
+                        }}
                       >
                         <DownloadIcon />
                       </IconButton>
