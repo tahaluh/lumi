@@ -28,7 +28,7 @@ services:
       DB_NAME: database
     ports:
       - "8080:8080"
-    command: npm run db:migrate
+    command: npm run dev
 
 volumes:
   postgres_data:
