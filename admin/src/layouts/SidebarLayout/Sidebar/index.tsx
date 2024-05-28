@@ -12,7 +12,8 @@ import {
   Button,
   lighten,
   darken,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 
 import SidebarMenu from './SidebarMenu';
@@ -62,7 +63,9 @@ function Sidebar() {
                 width: 52
               }}
             >
-              <Logo />
+              <Typography variant="h6" >
+                {'Admin'}
+              </Typography>
             </Box>
           </Box>
           <Divider
