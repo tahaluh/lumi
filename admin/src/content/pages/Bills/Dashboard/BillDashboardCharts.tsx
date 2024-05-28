@@ -32,11 +32,14 @@ function BillDashboardCharts() {
 
   const baseChartData = {
     options: {
+      noData: {
+        text: 'Sem dados...'
+      },
       chart: {
         id: 'chart-energy',
         toolbar: {
           show: false,
-        }
+        },
       },
       yaxis: {
         labels: {
