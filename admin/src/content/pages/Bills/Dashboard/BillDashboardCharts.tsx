@@ -201,7 +201,6 @@ function BillDashboardCharts() {
 
 export default BillDashboardCharts;
 
-
 const reducedDashboardData = (data?: ClientDashboardResponse) => {
   if (!data) {
     return {
@@ -210,24 +209,44 @@ const reducedDashboardData = (data?: ClientDashboardResponse) => {
       seriesEnergyCompensated: [],
       seriesValue: [],
       seriesValueCompensated: []
-    }
+    };
   }
 
-  const categories = data.data.map((item) => `${item.referenceYear}-${item.referenceMonth}`).sort(
-    (a, b) => {
-      const [yearA, monthA] = a.split('-').map(Number);
-      const [yearB, monthB] = b.split('-').map(Number);
-      return yearA === yearB ? monthA - monthB : yearA - yearB;
+  const monthYearMap = {};
+
+  data.data.forEach((item) => {
+    const key = `${item.referenceYear}-${item.referenceMonth}`;
+    if (!monthYearMap[key]) {
+      monthYearMap[key] = {
+        energy: 0,
+        energyICMS: 0,
+        energyCompensated: 0,
+        energyTotal: 0,
+        energyICMSTotal: 0,
+        energyCompensatedTotal: 0,
+        publicLightingContribution: 0
+      };
     }
-  );
 
-  const seriesEnergy = data.data.map((item) => (item.energyAmount ?? 0) + (item.energyICMSAmount ?? 0));
-  const seriesValue = data.data.map((item) => item.energyTotal + item.energyICMSTotal + item.publicLightingContribution);
+    monthYearMap[key].energy += item.energyAmount ?? 0;
+    monthYearMap[key].energyICMS += item.energyICMSAmount ?? 0;
+    monthYearMap[key].energyCompensated += item.energyCompensatedAmount ?? 0;
+    monthYearMap[key].energyTotal += item.energyTotal ?? 0;
+    monthYearMap[key].energyICMSTotal += item.energyICMSTotal ?? 0;
+    monthYearMap[key].energyCompensatedTotal += item.energyCompensatedTotal ?? 0;
+    monthYearMap[key].publicLightingContribution += item.publicLightingContribution ?? 0;
+  });
 
-  const seriesEnergyCompensated = data.data.map((item) => item.energyCompensatedAmount);
-  const seriesValueCompensated = data.data.map((item) => -item.energyCompensatedTotal);
+  const categories = Object.keys(monthYearMap).sort((a, b) => {
+    const [yearA, monthA] = a.split('-').map(Number);
+    const [yearB, monthB] = b.split('-').map(Number);
+    return yearA === yearB ? monthA - monthB : yearA - yearB;
+  });
 
-
+  const seriesEnergy = categories.map((key) => monthYearMap[key].energy + monthYearMap[key].energyICMS);
+  const seriesEnergyCompensated = categories.map((key) => monthYearMap[key].energyCompensated);
+  const seriesValue = categories.map((key) => monthYearMap[key].energyTotal + monthYearMap[key].energyICMSTotal + monthYearMap[key].publicLightingContribution);
+  const seriesValueCompensated = categories.map((key) => -monthYearMap[key].energyCompensatedTotal);
 
   return {
     categories,
@@ -235,5 +254,5 @@ const reducedDashboardData = (data?: ClientDashboardResponse) => {
     seriesEnergyCompensated,
     seriesValue,
     seriesValueCompensated
-  }
-}
+  };
+};
