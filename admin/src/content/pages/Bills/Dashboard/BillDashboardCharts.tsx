@@ -138,7 +138,12 @@ function BillDashboardCharts() {
         <Box display="flex" gap={2} p={2}>
           <Box flex={1}>
             <Chart
-              options={baseChartData.options}
+              options={{
+                ...baseChartData.options,
+                xaxis: {
+                  categories
+                }
+              }}
               series={[
                 {
                   name: 'Consumo de Energia Elétrica (kWh)',
@@ -153,16 +158,21 @@ function BillDashboardCharts() {
               height={350}
             />
             <Typography variant="subtitle1" align="center">
-              Total Consumo: {chartEnergyData[0].data.reduce((acc, val) => acc + val, 0)} kWh
+              Total Consumo: {(seriesEnergy.reduce((acc, val) => acc + val, 0)).toFixed(2)} kWh
               <br />
-              Total Compensado GD I: {chartEnergyData[1].data.reduce((acc, val) => acc + val, 0)} kWh
+              Total Compensado GD I: {(seriesEnergyCompensated.reduce((acc, val) => acc + val, 0)).toFixed(2)} kWh
               <br />
-              Total Resultante: {chartEnergyData[0].data.reduce((acc, val) => acc + val, 0) - chartEnergyData[1].data.reduce((acc, val) => acc + val, 0)} kWh
+              Total Resultante: {(seriesEnergy.reduce((acc, val) => acc + val, 0) - seriesEnergyCompensated.reduce((acc, val) => acc + val, 0)).toFixed(2)} kWh
             </Typography>
           </Box>
           <Box flex={1}>
             <Chart
-              options={baseChartData.options}
+              options={{
+                ...baseChartData.options,
+                xaxis: {
+                  categories
+                }
+              }}
               series={[
                 {
                   name: 'Valor Total sem GD (R$)',
@@ -177,11 +187,11 @@ function BillDashboardCharts() {
               height={350}
             />
             <Typography variant="subtitle1" align="center">
-              Total Valor sem GD: R$ {chartValueData[0].data.reduce((acc, val) => acc + val, 0)}
+              Total Valor sem GD: R$ {(seriesValue.reduce((acc, val) => acc + val, 0)).toFixed(2)}
               <br />
-              Total Economia GD: R$ {chartValueData[1].data.reduce((acc, val) => acc + val, 0)}
+              Total Economia GD: R$ {(seriesValueCompensated.reduce((acc, val) => acc + val, 0)).toFixed(2)}
               <br />
-              Total Resultante: R$ {chartValueData[0].data.reduce((acc, val) => acc + val, 0) - chartValueData[1].data.reduce((acc, val) => acc + val, 0)}
+              Total Resultante: R$ {(seriesValue.reduce((acc, val) => acc + val, 0) - seriesValueCompensated.reduce((acc, val) => acc + val, 0)).toFixed(2)}
             </Typography>
           </Box>
         </Box>)}
@@ -202,48 +212,22 @@ const reducedDashboardData = (data?: ClientDashboardResponse) => {
       seriesValueCompensated: []
     }
   }
-  const reducedData = data.data.reduce((acc, val) => {
-    const key = `${val.referenceYear}-${val.referenceMonth}`;
 
-    if (!acc[key]) {
-      acc[key] = {
-        energy: 0,
-        energyICMS: 0,
-        energyCompensated: 0,
-        energyTotal: 0,
-        energyICMSTotal: 0,
-        energyCompensatedTotal: 0,
-      };
-    }
-
-    acc[key].energy += val.energyAmount;
-    acc[key].energyICMS += val.energyICMSAmount;
-    acc[key].energyCompensated += val.energyCompensatedAmount;
-    acc[key].energyTotal += val.energyTotal;
-    acc[key].energyICMSTotal += val.energyICMSTotal;
-    acc[key].energyCompensatedTotal -= val.energyCompensatedTotal;
-
-    return acc;
-  }, {});
-
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  const categories = Object.keys(reducedData)
-    .sort((a, b) => {
+  const categories = data.data.map((item) => `${item.referenceYear}-${item.referenceMonth}`).sort(
+    (a, b) => {
       const [yearA, monthA] = a.split('-').map(Number);
       const [yearB, monthB] = b.split('-').map(Number);
       return yearA === yearB ? monthA - monthB : yearA - yearB;
-    })
-    .map(key => {
-      const [year, month] = key.split('-').map(Number);
-      return `${months[month - 1]}-${year}`;
-    });
+    }
+  );
+
+  const seriesEnergy = data.data.map((item) => (item.energyAmount ?? 0) + (item.energyICMSAmount ?? 0));
+  const seriesValue = data.data.map((item) => item.energyTotal + item.energyICMSTotal + item.publicLightingContribution);
+
+  const seriesEnergyCompensated = data.data.map((item) => item.energyCompensatedAmount);
+  const seriesValueCompensated = data.data.map((item) => -item.energyCompensatedTotal);
 
 
-  const seriesEnergy = Object.values(reducedData).map((val: { energy?: number }) => val.energy ?? 0);
-  const seriesEnergyCompensated = Object.values(reducedData).map((val: { energyCompensated?: number }) => val.energyCompensated ?? 0);
-  const seriesValue = Object.values(reducedData).map((val: { energyTotal?: number }) => val.energyTotal ?? 0);
-  const seriesValueCompensated = Object.values(reducedData).map((val: { energyCompensatedTotal?: number }) => val.energyCompensatedTotal ?? 0);
 
   return {
     categories,
