@@ -8,11 +8,11 @@ import BaseLayout from 'src/layouts/BaseLayout';
 import SuspenseLoader from 'src/components/SuspenseLoader';
 
 const Loader = (Component) => (props) =>
-  (
-    <Suspense fallback={<SuspenseLoader />}>
-      <Component {...props} />
-    </Suspense>
-  );
+(
+  <Suspense fallback={<SuspenseLoader />}>
+    <Component {...props} />
+  </Suspense>
+);
 
 // Pages
 
@@ -76,6 +76,12 @@ const StatusMaintenance = Loader(
   lazy(() => import('src/content/pages/Status/Maintenance'))
 );
 
+// Bills
+
+const Dashboard = Loader(
+  lazy(() => import('src/content/pages/Bills/Dashboard'))
+);
+
 const routes: RouteObject[] = [
   {
     path: '',
@@ -84,10 +90,6 @@ const routes: RouteObject[] = [
       {
         path: '/',
         element: <Overview />
-      },
-      {
-        path: 'overview',
-        element: <Navigate to="/" replace />
       },
       {
         path: 'status',
@@ -120,6 +122,18 @@ const routes: RouteObject[] = [
       }
     ]
   },
+  {
+    path: '',
+    element: <SidebarLayout />,
+    children: [
+      {
+        path: 'dashboard',
+        element: <Dashboard />
+      }
+    ]
+  },
+
+  // Template Pages
   {
     path: 'dashboards',
     element: <SidebarLayout />,

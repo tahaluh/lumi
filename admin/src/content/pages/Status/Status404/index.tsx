@@ -10,9 +10,8 @@ import {
   InputAdornment
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
-import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
-
 import { styled } from '@mui/material/styles';
+import LocalRoutes from 'src/routes/LocalRoutes';
 
 const MainContent = styled(Box)(
   ({ theme }) => `
@@ -61,31 +60,11 @@ function Status404() {
               below should help!
             </Typography>
           </Box>
-          <Container maxWidth="sm">
-            <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
-              <FormControl variant="outlined" fullWidth>
-                <OutlinedInputWrapper
-                  type="text"
-                  placeholder="Search terms here..."
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <ButtonSearch variant="contained" size="small">
-                        Search
-                      </ButtonSearch>
-                    </InputAdornment>
-                  }
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <SearchTwoToneIcon />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <Divider sx={{ my: 4 }}>OR</Divider>
-              <Button href="/overview" variant="outlined">
-                Go to homepage
-              </Button>
-            </Card>
+          <Container maxWidth="sm" sx={{ textAlign: 'center', mt: 3, p: 4 }}>
+
+            <Button href={LocalRoutes.dashboard} variant="outlined">
+              Go to homepage
+            </Button>
           </Container>
         </Container>
       </MainContent>
