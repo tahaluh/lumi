@@ -98,7 +98,8 @@ export default class ElectricityBillController extends BaseController {
 	async getClientDashboard(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const clientNumber = req.params.clientNumber;
-			const dashboardData = await billService.getClientDashboard(clientNumber);
+			const year = req.query.year as string;
+			const dashboardData = await billService.getClientDashboard(clientNumber, year);
 			this.send(res, 200, dashboardData);
 		} catch (error) {
 			next(error);
