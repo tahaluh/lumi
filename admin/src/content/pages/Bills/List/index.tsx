@@ -1,15 +1,16 @@
 import { Helmet } from 'react-helmet-async';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Container, Grid } from '@mui/material';
-import Footer from 'src/components/Footer';
-import BillDashboardCharts from './BillDashboardCharts';
 import PageHeader from './PageHeader';
+import PageTitleWrapper from 'src/components/PageTitleWrapper';
+import { Grid, Container } from '@mui/material';
+import Footer from 'src/components/Footer';
+import BillsList from './BillsList';
 
-function Dashboard() {
+
+function Bills() {
   return (
     <>
       <Helmet>
-        <title>Dashboard</title>
+        <title>Bills</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader />
@@ -20,10 +21,10 @@ function Dashboard() {
           direction="row"
           justifyContent="center"
           alignItems="stretch"
-          spacing={4}
+          spacing={3}
         >
           <Grid item xs={12}>
-            <BillDashboardCharts />
+            <BillsList />
           </Grid>
         </Grid>
       </Container>
@@ -32,4 +33,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Bills;

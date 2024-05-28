@@ -2,24 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { Card, Box, CardHeader, FormControl, InputLabel, Select, TextField, Typography, MenuItem } from '@mui/material';
 import { useTheme } from '@emotion/react';
-import { ClientDashboardResponse, fetchDashboardData } from './services/fetchDashboard';
+import { ClientDashboardResponse, fetchDashboardData } from '../services/fetchDashboard';
 import { set } from 'date-fns';
 
 interface Filters {
   year?: string;
   month?: string;
   clientNumber?: string;
-}
-
-interface DashboardData {
-  referenceYear: string;
-  referenceMonth: string;
-  energy: number;
-  energyICMS: number;
-  energyCompensated: number;
-  energyTotal: number;
-  energyICMSTotal: number;
-  energyCompensatedTotal: number;
 }
 
 function BillDashboardCharts() {

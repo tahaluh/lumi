@@ -19,7 +19,7 @@ function PageHeader() {
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
         <Typography variant="h3" component="h3" gutterBottom>
-          Dashboard
+          Faturas
         </Typography>
       </Grid>
       <Grid item>

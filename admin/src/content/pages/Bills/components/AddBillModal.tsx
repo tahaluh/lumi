@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction, Button, Box } from '@mui/material';
 import { AddCircleOutline, DeleteOutline } from '@mui/icons-material';
-import { UploadBills } from './services/uploadBills';
+import { UploadBills } from '../services/uploadBills';
 import { useSnackbar } from 'notistack'
 
 function AddBillModal({ open, onClose }) {

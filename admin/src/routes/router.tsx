@@ -81,7 +81,9 @@ const StatusMaintenance = Loader(
 const Dashboard = Loader(
   lazy(() => import('src/content/pages/Bills/Dashboard'))
 );
-
+const Bills = Loader(
+  lazy(() => import('src/content/pages/Bills/List'))
+);
 const routes: RouteObject[] = [
 
   {
@@ -95,6 +97,10 @@ const routes: RouteObject[] = [
       {
         path: 'dashboard',
         element: <Dashboard />
+      },
+      {
+        path: 'bills',
+        element: <Bills />
       }
     ]
   },
