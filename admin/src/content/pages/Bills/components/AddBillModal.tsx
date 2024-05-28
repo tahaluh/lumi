@@ -42,6 +42,7 @@ function AddBillModal({ open, onClose }) {
             });
         }
         if (succeeded.length > 0) enqueueSnackbar(`Sucesso ao importar ${succeeded.length} contas`, { variant: 'success' });
+        if (res.error) enqueueSnackbar(`${res.error}`, { variant: 'error' });
         setSelectedFiles([]);
         onClose();
     };

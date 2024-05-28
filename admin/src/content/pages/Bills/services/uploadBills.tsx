@@ -30,7 +30,7 @@ export async function UploadBills(
     } catch (e) {
         return {
             data: null,
-            error: getMessageFromError(e),
+            error: e,
         };
     }
 }

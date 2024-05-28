@@ -5,6 +5,7 @@ COPY package.json package-lock.json /var/lumi/
 WORKDIR /var/lumi
 
 COPY . /var/lumi
+RUN mkdir -p /var/lumi/uploads
 
 RUN npm install
 
