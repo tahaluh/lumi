@@ -81,21 +81,21 @@ export class ElectricityBillService {
 				dueDate: rawData.vencimento,
 				barCode: rawData.codBarras,
 				// save the parseFloat number or if its null, save null
-				energyAmount: rawData.energiaEletrica.quantidade ? parseFloat(rawData.energiaEletrica.quantidade.replace(',', '.')) : null,
-				energyPrice: rawData.energiaEletrica.preco ? parseFloat(rawData.energiaEletrica.preco.replace(',', '.')) : null,
-				energyTotal: rawData.energiaEletrica.valor ? parseFloat(rawData.energiaEletrica.valor.replace(',', '.')) : null,
+				energyAmount: rawData.energiaEletrica.quantidade ? parseFloat(rawData.energiaEletrica.quantidade.replace('.', '').replace(',', '.')) : null,
+				energyPrice: rawData.energiaEletrica.preco ? parseFloat(rawData.energiaEletrica.preco.replace('.', '').replace(',', '.')) : null,
+				energyTotal: rawData.energiaEletrica.valor ? parseFloat(rawData.energiaEletrica.valor.replace('.', '').replace(',', '.')) : null,
 
-				energyICMSAmount: rawData.enegiaICMS.quantidade ? parseFloat(rawData.enegiaICMS.quantidade.replace(',', '.')) : null,
-				energyICMSPrice: rawData.enegiaICMS.preco ? parseFloat(rawData.enegiaICMS.preco.replace(',', '.')) : null,
-				energyICMSTotal: rawData.enegiaICMS.valor ? parseFloat(rawData.enegiaICMS.valor.replace(',', '.')) : null,
+				energyICMSAmount: rawData.enegiaICMS.quantidade ? parseFloat(rawData.enegiaICMS.quantidade.replace('.', '').replace(',', '.')) : null,
+				energyICMSPrice: rawData.enegiaICMS.preco ? parseFloat(rawData.enegiaICMS.preco.replace('.', '').replace(',', '.')) : null,
+				energyICMSTotal: rawData.enegiaICMS.valor ? parseFloat(rawData.enegiaICMS.valor.replace('.', '').replace(',', '.')) : null,
 
-				energyCompensatedAmount: rawData.energiaCompensada.quantidade ? parseFloat(rawData.energiaCompensada.quantidade.replace(',', '.')) : null,
-				energyCompensatedPrice: rawData.energiaCompensada.preco ? parseFloat(rawData.energiaCompensada.preco.replace(',', '.')) : null,
-				energyCompensatedTotal: rawData.energiaCompensada.valor ? parseFloat(rawData.energiaCompensada.valor.replace(',', '.')) : null,
+				energyCompensatedAmount: rawData.energiaCompensada.quantidade ? parseFloat(rawData.energiaCompensada.quantidade.replace('.', '').replace(',', '.')) : null,
+				energyCompensatedPrice: rawData.energiaCompensada.preco ? parseFloat(rawData.energiaCompensada.preco.replace('.', '').replace(',', '.')) : null,
+				energyCompensatedTotal: rawData.energiaCompensada.valor ? parseFloat(rawData.energiaCompensada.valor.replace('.', '').replace(',', '.')) : null,
 
-				publicLightingContribution: rawData.contribIlum ? parseFloat(rawData.contribIlum.replace(',', '.')) : null,
+				publicLightingContribution: rawData.contribIlum ? parseFloat(rawData.contribIlum.replace('.', '').replace(',', '.')) : null,
 
-				totalPrice: rawData.valorAPagar ? parseFloat(rawData.valorAPagar.replace(',', '.')) : null,
+				totalPrice: rawData.valorAPagar ? parseFloat(rawData.valorAPagar.replace('.', '').replace(',', '.')) : null,
 			}
 
 			if (saveToDatabase) {
