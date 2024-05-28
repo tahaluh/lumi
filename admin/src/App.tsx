@@ -11,6 +11,7 @@ import { SWRConfig } from 'swr';
 import { fetcher } from './services/fetcher';
 
 
+
 function App() {
   const content = useRoutes(router);
 
@@ -22,7 +23,6 @@ function App() {
             fetcher,
           }}
         >
-
           <CssBaseline />
           {content}
         </SWRConfig>

@@ -1,8 +1,21 @@
 import { Typography, Button, Grid } from '@mui/material';
 
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
+import { useState } from 'react';
+import AddBillModal from './AddBillModal';
+
 
 function PageHeader() {
+  const [openAddBillsModal, setOpenAddBillsModal] = useState(false);
+
+  const handleOpenAddBillsModal = () => {
+    setOpenAddBillsModal(true);
+  };
+
+  const handleCloseAddBillsModal = () => {
+    setOpenAddBillsModal(false);
+  };
+
   return (
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
@@ -11,13 +24,10 @@ function PageHeader() {
         </Typography>
       </Grid>
       <Grid item>
-        <Button
-          sx={{ mt: { xs: 2, md: 0 } }}
-          variant="contained"
-          startIcon={<AddTwoToneIcon fontSize="small" />}
-        >
-          Add a bill
+        <Button variant="contained" onClick={handleOpenAddBillsModal}>
+          Adicionar fatura
         </Button>
+        <AddBillModal open={openAddBillsModal} onClose={handleCloseAddBillsModal} />
       </Grid>
     </Grid>
   );

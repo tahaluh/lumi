@@ -85,11 +85,24 @@ export default class ElectricityBillController extends BaseController {
 			}
 
 			const filePaths = req.files.map((file: Express.Multer.File) => file.path);
+
+			// return a data with suceded and failed count and files names
 			const extractedData = await Promise.all(
-				filePaths.map((filePath) => billService.extractDataFromPDF(filePath, true)),
+				filePaths.map(async (filePath) => {
+					try {
+						const data = await billService.extractDataFromPDF(filePath, true);
+						return { data, fileName: filePath.split('_').pop() };
+					} catch (error) {
+						return { error: error.message, fileName: filePath.split('_').pop() };
+					}
+				})
 			);
 
-			res.status(200).json(extractedData);
+			const failed = extractedData.filter((data) => data.error);
+			const succeeded = extractedData.filter((data) => !data.error);
+
+
+			res.status(200).json({ succeeded, failed });
 		} catch (error) {
 			next(error);
 		}
